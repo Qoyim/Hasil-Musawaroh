@@ -1,0 +1,2106 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#1a7a3c">
+<meta name="description" content="Hasil Musawaroh Digital - Pencatatan musawaroh yang tertib, cepat, dan terdokumentasi">
+<title>Hasil Musawaroh Digital</title>
+<link rel="manifest" href="data:application/json,{}">
+<style>
+  :root {
+    --green-900: #0d4a22;
+    --green-800: #145c2c;
+    --green-700: #1a7a3c;
+    --green-600: #1f9148;
+    --green-500: #27a857;
+    --green-400: #4dc472;
+    --green-200: #a8e6bc;
+    --green-100: #d4f2e0;
+    --green-50:  #edfaf3;
+    --white: #ffffff;
+    --gray-50: #f8fafb;
+    --gray-100: #f0f2f4;
+    --gray-200: #e2e6ea;
+    --gray-300: #c8d0d8;
+    --gray-400: #9aa4ae;
+    --gray-500: #6b7885;
+    --gray-600: #4a535b;
+    --gray-700: #343b42;
+    --gray-800: #1e2328;
+    --red-500: #e53e3e;
+    --red-100: #fff5f5;
+    --orange-500: #dd6b20;
+    --orange-100: #fffaf0;
+    --blue-500: #3182ce;
+    --blue-100: #ebf8ff;
+    --purple-500: #805ad5;
+    --purple-100: #faf5ff;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+    --shadow-md: 0 4px 12px rgba(0,0,0,.10);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,.12);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --nav-h: 64px;
+    --header-h: 56px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-700);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ===== LAYOUT ===== */
+  #app { max-width: 480px; margin: 0 auto; position: relative; min-height: 100vh; background: var(--white); }
+  .page { display: none; flex-direction: column; min-height: 100vh; padding-bottom: calc(var(--nav-h) + 12px); }
+  .page.active { display: flex; }
+
+  /* ===== TOP HEADER ===== */
+  .top-header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--green-700);
+    height: var(--header-h);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  }
+  .top-header h1 { color: var(--white); font-size: 17px; font-weight: 700; letter-spacing: .2px; }
+  .top-header .back-btn {
+    background: none; border: none; color: var(--white);
+    width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; cursor: pointer; font-size: 20px;
+    transition: background .15s;
+  }
+  .top-header .back-btn:hover { background: rgba(255,255,255,.15); }
+  .header-actions { display: flex; gap: 4px; }
+  .icon-btn {
+    background: none; border: none; color: var(--white);
+    width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; cursor: pointer; font-size: 18px; transition: background .15s;
+  }
+  .icon-btn:hover { background: rgba(255,255,255,.15); }
+
+  /* ===== BOTTOM NAV ===== */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 480px; height: var(--nav-h);
+    background: var(--white);
+    border-top: 1px solid var(--gray-200);
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    z-index: 200;
+    box-shadow: 0 -2px 12px rgba(0,0,0,.08);
+  }
+  .nav-item {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px; cursor: pointer; color: var(--gray-400);
+    border: none; background: none; padding: 8px 4px;
+    transition: color .15s;
+    font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .3px;
+  }
+  .nav-item svg { width: 22px; height: 22px; }
+  .nav-item.active { color: var(--green-700); }
+  .nav-item.center-btn {
+    color: var(--white);
+    background: var(--green-600);
+    border-radius: 50%;
+    width: 52px; height: 52px;
+    margin: auto;
+    box-shadow: 0 4px 12px rgba(27,122,60,.4);
+    font-size: 24px;
+  }
+  .nav-item.center-btn:hover { background: var(--green-700); }
+
+  /* ===== SCROLL CONTENT ===== */
+  .scroll-content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+  /* ===== DASHBOARD HERO ===== */
+  .dashboard-hero {
+    background: linear-gradient(135deg, var(--green-700) 0%, var(--green-900) 100%);
+    padding: 20px 16px 32px;
+    position: relative; overflow: hidden;
+  }
+  .dashboard-hero::after {
+    content: ''; position: absolute; right: -30px; top: -30px;
+    width: 140px; height: 140px; border-radius: 50%;
+    background: rgba(255,255,255,.06);
+  }
+  .dashboard-hero::before {
+    content: ''; position: absolute; right: 40px; bottom: -20px;
+    width: 80px; height: 80px; border-radius: 50%;
+    background: rgba(255,255,255,.04);
+  }
+  .hero-greeting { color: var(--green-200); font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+  .hero-title { color: var(--white); font-size: 22px; font-weight: 800; margin-bottom: 16px; line-height: 1.2; }
+  .active-card {
+    background: rgba(255,255,255,.14);
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(8px);
+  }
+  .active-card-info { }
+  .active-card-label { color: rgba(255,255,255,.7); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+  .active-card-title { color: var(--white); font-size: 15px; font-weight: 700; margin: 2px 0; }
+  .active-card-sub { color: rgba(255,255,255,.65); font-size: 12px; }
+  .active-badge {
+    background: var(--green-400); color: var(--white);
+    font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px;
+    text-transform: uppercase; letter-spacing: .5px;
+  }
+  .no-active { color: rgba(255,255,255,.7); font-size: 14px; text-align: center; padding: 8px 0; }
+  .btn-detail {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--white); color: var(--green-700);
+    border: none; border-radius: 20px; padding: 7px 14px;
+    font-size: 13px; font-weight: 700; cursor: pointer; margin-top: 12px;
+    transition: all .15s;
+  }
+  .btn-detail:hover { background: var(--green-50); }
+
+  /* ===== STAT CARDS ===== */
+  .stats-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; padding: 16px;
+    margin-top: -16px;
+  }
+  .stat-card {
+    background: var(--white); border-radius: var(--radius-md);
+    padding: 14px; box-shadow: var(--shadow-md);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .stat-icon {
+    width: 44px; height: 44px; border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center; font-size: 22px;
+    flex-shrink: 0;
+  }
+  .stat-icon.green { background: var(--green-100); }
+  .stat-icon.blue { background: var(--blue-100); }
+  .stat-icon.orange { background: var(--orange-100); }
+  .stat-icon.purple { background: var(--purple-100); }
+  .stat-num { font-size: 24px; font-weight: 800; color: var(--gray-800); line-height: 1; }
+  .stat-label { font-size: 11px; color: var(--gray-500); margin-top: 2px; font-weight: 500; }
+
+  /* ===== SECTION TITLE ===== */
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 16px 8px;
+  }
+  .section-title { font-size: 16px; font-weight: 700; color: var(--gray-800); }
+  .see-all {
+    color: var(--green-700); font-size: 13px; font-weight: 600;
+    border: none; background: none; cursor: pointer;
+  }
+
+  /* ===== QUICK MENU ===== */
+  .quick-menu {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 8px; padding: 0 16px 8px;
+  }
+  .quick-item {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 14px 8px;
+    background: var(--white); border-radius: var(--radius-md);
+    border: 1.5px solid var(--gray-100);
+    cursor: pointer; transition: all .15s;
+    border: none; box-shadow: var(--shadow-sm);
+  }
+  .quick-item:hover, .quick-item:active { background: var(--green-50); transform: scale(.97); }
+  .quick-icon { font-size: 26px; }
+  .quick-label { font-size: 11px; color: var(--gray-600); font-weight: 600; text-align: center; }
+
+  /* ===== LIST ITEMS ===== */
+  .list-card {
+    margin: 0 16px 10px;
+    background: var(--white); border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm); overflow: hidden;
+  }
+  .list-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--gray-100);
+    cursor: pointer; transition: background .12s;
+  }
+  .list-item:last-child { border-bottom: none; }
+  .list-item:hover { background: var(--gray-50); }
+  .list-item-icon {
+    width: 40px; height: 40px; border-radius: var(--radius-sm);
+    background: var(--green-100); display: flex; align-items: center;
+    justify-content: center; font-size: 18px; flex-shrink: 0;
+  }
+  .list-item-content { flex: 1; min-width: 0; }
+  .list-item-title { font-size: 14px; font-weight: 700; color: var(--gray-800); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .list-item-sub { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+  .list-item-actions { display: flex; gap: 4px; }
+  .action-btn {
+    width: 32px; height: 32px; border-radius: 8px; border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 14px; transition: all .12s;
+  }
+  .action-btn.edit { background: var(--blue-100); color: var(--blue-500); }
+  .action-btn.del { background: var(--red-100); color: var(--red-500); }
+  .action-btn:hover { transform: scale(1.05); }
+  .status-badge {
+    font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px;
+    text-transform: uppercase; letter-spacing: .3px; flex-shrink: 0;
+  }
+  .status-badge.aktif { background: var(--green-100); color: var(--green-700); }
+  .status-badge.selesai { background: var(--gray-100); color: var(--gray-500); }
+
+  /* ===== FORMS ===== */
+  .form-container { padding: 16px; }
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: block; font-size: 13px; font-weight: 600;
+    color: var(--gray-700); margin-bottom: 6px;
+  }
+  .form-label .req { color: var(--red-500); }
+  .form-input, .form-select, .form-textarea {
+    width: 100%; padding: 11px 14px;
+    border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm);
+    font-size: 14px; color: var(--gray-700);
+    background: var(--white); outline: none;
+    transition: border-color .15s, box-shadow .15s;
+    font-family: inherit;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--green-500);
+    box-shadow: 0 0 0 3px rgba(39,168,87,.12);
+  }
+  .form-textarea { resize: vertical; min-height: 80px; }
+  .form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7885' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+
+  /* ===== BUTTONS ===== */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 12px 20px; border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    border: none; transition: all .15s; font-family: inherit;
+    letter-spacing: .2px;
+  }
+  .btn-primary { background: var(--green-600); color: var(--white); box-shadow: 0 2px 8px rgba(27,145,72,.3); }
+  .btn-primary:hover { background: var(--green-700); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-secondary { background: var(--gray-100); color: var(--gray-700); }
+  .btn-secondary:hover { background: var(--gray-200); }
+  .btn-danger { background: var(--red-100); color: var(--red-500); }
+  .btn-danger:hover { background: #fed7d7; }
+  .btn-outline { background: transparent; color: var(--green-700); border: 1.5px solid var(--green-700); }
+  .btn-outline:hover { background: var(--green-50); }
+  .btn-full { width: 100%; }
+  .btn-sm { padding: 8px 14px; font-size: 13px; }
+  .btn-row { display: flex; gap: 10px; padding: 0 16px 16px; }
+  .btn-row .btn { flex: 1; }
+
+  /* ===== EMPTY STATE ===== */
+  .empty-state {
+    text-align: center; padding: 48px 24px;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+  }
+  .empty-icon { font-size: 56px; opacity: .6; }
+  .empty-title { font-size: 16px; font-weight: 700; color: var(--gray-700); }
+  .empty-sub { font-size: 13px; color: var(--gray-400); line-height: 1.5; }
+
+  /* ===== TABS ===== */
+  .tab-bar {
+    display: flex; overflow-x: auto; padding: 12px 16px 0;
+    gap: 8px; border-bottom: 1.5px solid var(--gray-200);
+    scrollbar-width: none;
+  }
+  .tab-bar::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex-shrink: 0; padding: 8px 14px;
+    border: none; background: none; cursor: pointer;
+    font-size: 13px; font-weight: 600; color: var(--gray-500);
+    border-bottom: 2.5px solid transparent; margin-bottom: -1.5px;
+    transition: all .15s;
+  }
+  .tab-btn.active { color: var(--green-700); border-bottom-color: var(--green-700); }
+
+  /* ===== SIGNATURE CANVAS ===== */
+  .sig-canvas-wrap {
+    background: var(--gray-50); border: 2px dashed var(--gray-300);
+    border-radius: var(--radius-md); position: relative; overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .sig-canvas-wrap canvas { display: block; width: 100%; touch-action: none; cursor: crosshair; }
+  .sig-hint { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); color: var(--gray-400); font-size: 12px; pointer-events: none; text-align: center; }
+  .sig-preview {
+    width: 100%; max-height: 80px; object-fit: contain;
+    border: 1px solid var(--gray-200); border-radius: var(--radius-sm);
+    background: var(--white);
+  }
+
+  /* ===== BANNER CANVAS ===== */
+  .banner-wrap {
+    margin: 16px; border-radius: var(--radius-md); overflow: hidden;
+    box-shadow: var(--shadow-md);
+  }
+  .banner-wrap canvas { display: block; width: 100%; }
+  .template-picker { display: flex; gap: 8px; padding: 0 16px 12px; overflow-x: auto; scrollbar-width: none; }
+  .template-picker::-webkit-scrollbar { display: none; }
+  .tmpl-btn {
+    flex-shrink: 0; padding: 8px 14px; border-radius: 20px;
+    border: 1.5px solid var(--gray-200); background: var(--white);
+    font-size: 12px; font-weight: 600; color: var(--gray-600); cursor: pointer;
+    transition: all .15s;
+  }
+  .tmpl-btn.active { background: var(--green-700); color: var(--white); border-color: var(--green-700); }
+
+  /* ===== TOAST ===== */
+  .toast-container {
+    position: fixed; bottom: calc(var(--nav-h) + 16px); left: 50%;
+    transform: translateX(-50%); z-index: 999; width: calc(100% - 32px); max-width: 448px;
+  }
+  .toast {
+    background: var(--gray-800); color: var(--white);
+    padding: 12px 16px; border-radius: var(--radius-md);
+    font-size: 14px; font-weight: 600;
+    display: flex; align-items: center; gap: 10px;
+    box-shadow: var(--shadow-lg);
+    animation: slideUp .25s ease; margin-bottom: 8px;
+  }
+  .toast.success { background: var(--green-700); }
+  .toast.error { background: var(--red-500); }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 500;
+    background: rgba(0,0,0,.5); align-items: flex-end; justify-content: center;
+    backdrop-filter: blur(2px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    width: 100%; max-width: 480px; background: var(--white);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    padding: 0 0 24px;
+    max-height: 90vh; overflow-y: auto;
+    animation: slideModal .25s ease;
+  }
+  @keyframes slideModal { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal-handle { width: 36px; height: 4px; background: var(--gray-200); border-radius: 2px; margin: 12px auto 16px; }
+  .modal-title { font-size: 17px; font-weight: 800; color: var(--gray-800); padding: 0 16px 12px; }
+  .modal-body { padding: 0 16px; }
+  .modal-actions { display: flex; gap: 10px; padding: 16px 16px 0; }
+  .modal-actions .btn { flex: 1; }
+
+  /* ===== CONFIRM DIALOG ===== */
+  .confirm-overlay {
+    display: none; position: fixed; inset: 0; z-index: 600;
+    background: rgba(0,0,0,.5); align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .confirm-overlay.open { display: flex; }
+  .confirm-box {
+    background: var(--white); border-radius: var(--radius-lg); padding: 24px;
+    width: 100%; max-width: 320px; text-align: center;
+    animation: popIn .2s ease;
+  }
+  @keyframes popIn { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: scale(1); } }
+  .confirm-icon { font-size: 44px; margin-bottom: 12px; }
+  .confirm-title { font-size: 18px; font-weight: 800; color: var(--gray-800); margin-bottom: 8px; }
+  .confirm-msg { font-size: 14px; color: var(--gray-500); margin-bottom: 20px; line-height: 1.5; }
+  .confirm-actions { display: flex; gap: 10px; }
+  .confirm-actions .btn { flex: 1; }
+
+  /* ===== MUSAWAROH DETAIL ===== */
+  .detail-section { padding: 16px; }
+  .detail-title { font-size: 18px; font-weight: 800; color: var(--gray-800); margin-bottom: 4px; }
+  .detail-meta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .meta-chip {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 12px; color: var(--gray-600); font-weight: 500;
+  }
+  .info-row {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 0; border-bottom: 1px solid var(--gray-100);
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-label { font-size: 12px; color: var(--gray-500); font-weight: 600; width: 90px; flex-shrink: 0; }
+  .info-value { font-size: 14px; color: var(--gray-700); flex: 1; }
+
+  /* ===== HASIL ITEMS ===== */
+  .hasil-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 16px; border-bottom: 1px solid var(--gray-100);
+  }
+  .hasil-num {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--green-100); color: var(--green-700);
+    font-size: 12px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+  }
+  .hasil-text { flex: 1; font-size: 14px; color: var(--gray-700); line-height: 1.5; }
+  .hasil-actions { display: flex; gap: 4px; }
+
+  /* ===== PESERTA ===== */
+  .peserta-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; border-bottom: 1px solid var(--gray-100);
+  }
+  .peserta-num { font-size: 13px; font-weight: 700; color: var(--gray-400); width: 20px; text-align: right; flex-shrink: 0; }
+  .peserta-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--green-100); color: var(--green-700);
+    font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .peserta-info { flex: 1; min-width: 0; }
+  .peserta-name { font-size: 14px; font-weight: 700; color: var(--gray-800); }
+  .peserta-dapukan { font-size: 12px; color: var(--gray-500); }
+  .peserta-sig {
+    width: 60px; height: 36px; object-fit: contain;
+    border: 1px solid var(--gray-200); border-radius: 6px;
+    background: var(--white); flex-shrink: 0;
+  }
+  .peserta-sig-empty { width: 60px; height: 36px; border: 1.5px dashed var(--gray-300); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--gray-300); font-size: 16px; flex-shrink: 0; }
+  .hadir-badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 700; }
+  .hadir-badge.yes { background: var(--green-100); color: var(--green-700); }
+  .hadir-badge.no { background: var(--gray-100); color: var(--gray-500); }
+
+  /* ===== SEARCH ===== */
+  .search-bar {
+    padding: 12px 16px;
+    display: flex; align-items: center; gap: 10px;
+    background: var(--white); border-bottom: 1px solid var(--gray-100);
+  }
+  .search-input-wrap { flex: 1; display: flex; align-items: center; gap: 8px; background: var(--gray-100); border-radius: 10px; padding: 0 12px; }
+  .search-input-wrap svg { color: var(--gray-400); flex-shrink: 0; }
+  .search-input { flex: 1; border: none; background: none; padding: 9px 0; font-size: 14px; color: var(--gray-700); outline: none; font-family: inherit; }
+
+  /* ===== EXPORT BUTTONS ===== */
+  .export-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 16px; }
+  .export-card {
+    background: var(--white); border-radius: var(--radius-md);
+    padding: 20px 16px; text-align: center;
+    box-shadow: var(--shadow-sm); cursor: pointer;
+    border: 1.5px solid var(--gray-100); transition: all .15s;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .export-card:hover { border-color: var(--green-400); background: var(--green-50); }
+  .export-card-icon { font-size: 36px; }
+  .export-card-label { font-size: 13px; font-weight: 700; color: var(--gray-700); }
+  .export-card-sub { font-size: 11px; color: var(--gray-500); }
+
+  /* ===== DAPUKAN CATEGORY COLORS ===== */
+  .cat-desa { background: var(--green-100); color: var(--green-700); }
+  .cat-kelompok { background: var(--blue-100); color: var(--blue-500); }
+  .cat-muda { background: var(--orange-100); color: var(--orange-500); }
+  .cat-ppg { background: var(--purple-100); color: var(--purple-500); }
+  .cat-kegiatan { background: #fef3c7; color: #d97706; }
+
+  /* ===== DIVIDER ===== */
+  .divider { height: 8px; background: var(--gray-50); }
+
+  /* ===== FLOATING ADD ===== */
+  .fab {
+    position: fixed; bottom: calc(var(--nav-h) + 16px); right: 16px;
+    width: 52px; height: 52px; border-radius: 50%;
+    background: var(--green-600); color: var(--white);
+    border: none; font-size: 26px; cursor: pointer;
+    box-shadow: 0 4px 16px rgba(27,145,72,.4);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100; transition: all .15s;
+  }
+  .fab:hover { background: var(--green-700); transform: scale(1.05); }
+
+  /* ===== SELF CHECKIN ===== */
+  .checkin-card {
+    margin: 0 16px 16px; background: var(--white);
+    border-radius: var(--radius-md); box-shadow: var(--shadow-md); overflow: hidden;
+  }
+  .checkin-header { background: var(--green-700); padding: 16px; color: var(--white); }
+  .checkin-header h3 { font-size: 16px; font-weight: 800; }
+  .checkin-header p { font-size: 12px; opacity: .8; margin-top: 2px; }
+
+  /* ===== INFO BOX ===== */
+  .info-box {
+    margin: 0 16px 12px; padding: 12px 14px;
+    background: var(--green-50); border: 1.5px solid var(--green-200);
+    border-radius: var(--radius-sm);
+    font-size: 13px; color: var(--green-800);
+    display: flex; gap: 8px; align-items: flex-start;
+  }
+  .info-box svg { flex-shrink: 0; margin-top: 1px; }
+
+  /* ===== LOADING ===== */
+  .loading { display: flex; align-items: center; justify-content: center; padding: 32px; color: var(--gray-400); gap: 10px; font-size: 14px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner { width: 20px; height: 20px; border: 2px solid var(--gray-200); border-top-color: var(--green-600); border-radius: 50%; animation: spin .7s linear infinite; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 380px) {
+    .stats-grid { gap: 8px; }
+    .stat-num { font-size: 20px; }
+    .quick-label { font-size: 10px; }
+  }
+  @media (min-width: 481px) {
+    #app { box-shadow: 0 0 40px rgba(0,0,0,.15); }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ===== BOTTOM NAV ===== -->
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="nav-item active" data-page="dashboard" onclick="navigateTo('dashboard')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Beranda
+    </button>
+    <button class="nav-item" data-page="musawaroh" onclick="navigateTo('musawaroh')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Musawaroh
+    </button>
+    <button class="nav-item center-btn" onclick="showAddModal()">+</button>
+    <button class="nav-item" data-page="peserta" onclick="navigateTo('peserta')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      Peserta
+    </button>
+    <button class="nav-item" data-page="pengaturan" onclick="navigateTo('pengaturan')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      Pengaturan
+    </button>
+  </nav>
+
+  <!-- ===== PAGE: DASHBOARD ===== -->
+  <div class="page active" id="page-dashboard">
+    <div class="top-header">
+      <h1>🕌 Musawaroh Digital</h1>
+      <div class="header-actions">
+        <button class="icon-btn" onclick="navigateTo('export')" title="Export">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="scroll-content">
+      <div class="dashboard-hero">
+        <div class="hero-greeting">Selamat datang 👋</div>
+        <div class="hero-title">Kelola hasil musawaroh<br>dengan mudah</div>
+        <div id="heroActive"><div class="no-active">Belum ada musawaroh aktif</div></div>
+      </div>
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card">
+          <div class="stat-icon green">📋</div>
+          <div><div class="stat-num" id="statMusawaroh">0</div><div class="stat-label">Musawaroh</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue">👥</div>
+          <div><div class="stat-num" id="statPeserta">0</div><div class="stat-label">Total Peserta</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange">✍️</div>
+          <div><div class="stat-num" id="statTTD">0</div><div class="stat-label">Tanda Tangan</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple">📁</div>
+          <div><div class="stat-num" id="statHasil">0</div><div class="stat-label">Hasil Dicatat</div></div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <span class="section-title">Menu Cepat</span>
+      </div>
+      <div class="quick-menu">
+        <button class="quick-item" onclick="showAddModal()"><span class="quick-icon">➕</span><span class="quick-label">Buat Musawaroh</span></button>
+        <button class="quick-item" onclick="navigateTo('daftar-hadir')"><span class="quick-icon">📝</span><span class="quick-label">Daftar Hadir</span></button>
+        <button class="quick-item" onclick="navigateTo('hasil')"><span class="quick-icon">📋</span><span class="quick-label">Hasil Musawaroh</span></button>
+        <button class="quick-item" onclick="navigateTo('banner')"><span class="quick-icon">🖼️</span><span class="quick-label">Banner/Spanduk</span></button>
+        <button class="quick-item" onclick="navigateTo('export')"><span class="quick-icon">📤</span><span class="quick-label">Export Data</span></button>
+        <button class="quick-item" onclick="navigateTo('checkin')"><span class="quick-icon">✅</span><span class="quick-label">Self Check-In</span></button>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-header">
+        <span class="section-title">Musawaroh Terbaru</span>
+        <button class="see-all" onclick="navigateTo('musawaroh')">Lihat Semua</button>
+      </div>
+      <div id="recentMusawaroh"><div class="loading"><div class="spinner"></div>Memuat...</div></div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: MUSAWAROH LIST ===== -->
+  <div class="page" id="page-musawaroh">
+    <div class="top-header">
+      <h1>📋 Musawaroh</h1>
+      <button class="icon-btn" onclick="showAddModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+    <div class="scroll-content">
+      <div class="search-bar">
+        <div class="search-input-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" class="search-input" placeholder="Cari musawaroh..." id="searchMusawaroh" oninput="filterMusawaroh()">
+        </div>
+      </div>
+      <div id="musawarohList"><div class="loading"><div class="spinner"></div>Memuat...</div></div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: DETAIL MUSAWAROH ===== -->
+  <div class="page" id="page-detail">
+    <div class="top-header">
+      <button class="back-btn" onclick="goBack()">←</button>
+      <h1>Detail Musawaroh</h1>
+      <div class="header-actions">
+        <button class="icon-btn" id="detailEditBtn" onclick="editCurrentMusawaroh()">✏️</button>
+        <button class="icon-btn" id="detailDeleteBtn" onclick="deleteCurrentMusawaroh()">🗑️</button>
+      </div>
+    </div>
+    <div class="scroll-content">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchDetailTab('info',this)">Informasi</button>
+        <button class="tab-btn" onclick="switchDetailTab('hasil',this)">Hasil</button>
+        <button class="tab-btn" onclick="switchDetailTab('hadir',this)">Daftar Hadir</button>
+      </div>
+      <div id="detailInfo" class="detail-tab"></div>
+      <div id="detailHasil" class="detail-tab" style="display:none"></div>
+      <div id="detailHadir" class="detail-tab" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: PESERTA GLOBAL ===== -->
+  <div class="page" id="page-peserta">
+    <div class="top-header">
+      <h1>👥 Semua Peserta</h1>
+      <button class="icon-btn" onclick="showTambahPesertaModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+    <div class="scroll-content">
+      <div class="search-bar">
+        <div class="search-input-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" class="search-input" placeholder="Cari peserta..." id="searchPeserta" oninput="filterPeserta()">
+        </div>
+      </div>
+      <div id="pesertaList"><div class="loading"><div class="spinner"></div>Memuat...</div></div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: DAFTAR HADIR ===== -->
+  <div class="page" id="page-daftar-hadir">
+    <div class="top-header">
+      <button class="back-btn" onclick="goBack()">←</button>
+      <h1>Daftar Hadir</h1>
+      <button class="icon-btn" onclick="showTambahPesertaModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+    <div class="scroll-content">
+      <div id="daftarHadirContent"></div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: HASIL ===== -->
+  <div class="page" id="page-hasil">
+    <div class="top-header">
+      <button class="back-btn" onclick="goBack()">←</button>
+      <h1>Hasil Musawaroh</h1>
+    </div>
+    <div class="scroll-content">
+      <div id="hasilContent"></div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: SELF CHECK-IN ===== -->
+  <div class="page" id="page-checkin">
+    <div class="top-header">
+      <button class="back-btn" onclick="goBack()">←</button>
+      <h1>Self Check-In</h1>
+    </div>
+    <div class="scroll-content">
+      <div class="checkin-card">
+        <div class="checkin-header">
+          <h3>✅ Absensi Mandiri</h3>
+          <p>Peserta dapat check-in sendiri di sini</p>
+        </div>
+        <div style="padding:16px">
+          <div class="form-group">
+            <label class="form-label">Pilih Musawaroh <span class="req">*</span></label>
+            <select class="form-select" id="checkinMusawaroh" onchange="loadCheckinPeserta()">
+              <option value="">-- Pilih Musawaroh --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pilih Nama Anda <span class="req">*</span></label>
+            <select class="form-select" id="checkinPeserta">
+              <option value="">-- Pilih Nama --</option>
+            </select>
+          </div>
+          <div id="checkinSigArea" style="display:none">
+            <label class="form-label">Tanda Tangan <span class="req">*</span></label>
+            <div class="sig-canvas-wrap" style="height:120px">
+              <canvas id="checkinSigCanvas"></canvas>
+              <div class="sig-hint" id="checkinSigHint">Tanda tangan di sini</div>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:12px">
+              <button class="btn btn-secondary btn-sm" onclick="clearCheckinSig()">Hapus</button>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-full" onclick="doCheckin()">✅ Check-In Sekarang</button>
+        </div>
+      </div>
+      <div id="checkinStatus"></div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: BANNER ===== -->
+  <div class="page" id="page-banner">
+    <div class="top-header">
+      <button class="back-btn" onclick="goBack()">←</button>
+      <h1>🖼️ Generator Banner</h1>
+    </div>
+    <div class="scroll-content">
+      <div style="padding:16px 16px 8px">
+        <div class="form-group">
+          <label class="form-label">Pilih Musawaroh</label>
+          <select class="form-select" id="bannerMusawaroh" onchange="generateBanner()">
+            <option value="">-- Pilih Musawaroh --</option>
+          </select>
+        </div>
+      </div>
+      <div class="section-header"><span class="section-title">Pilih Template</span></div>
+      <div class="template-picker">
+        <button class="tmpl-btn active" onclick="setTemplate('spanduk',this)">📢 Spanduk Lebar</button>
+        <button class="tmpl-btn" onclick="setTemplate('banner',this)">📋 Banner Standar</button>
+        <button class="tmpl-btn" onclick="setTemplate('instagram',this)">📷 Instagram</button>
+        <button class="tmpl-btn" onclick="setTemplate('story',this)">📱 Story</button>
+      </div>
+      <div class="banner-wrap">
+        <canvas id="bannerCanvas"></canvas>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="downloadBanner('png')">⬇️ Unduh PNG</button>
+        <button class="btn btn-outline" onclick="downloadBanner('jpg')">⬇️ Unduh JPG</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: EXPORT ===== -->
+  <div class="page" id="page-export">
+    <div class="top-header">
+      <button class="back-btn" onclick="goBack()">←</button>
+      <h1>📤 Export Data</h1>
+    </div>
+    <div class="scroll-content">
+      <div style="padding:16px 16px 8px">
+        <div class="form-group">
+          <label class="form-label">Pilih Musawaroh</label>
+          <select class="form-select" id="exportMusawaroh">
+            <option value="">-- Semua Musawaroh --</option>
+          </select>
+        </div>
+      </div>
+      <div class="info-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Export akan menyertakan semua data peserta dan hasil musawaroh yang dipilih.
+      </div>
+      <div class="export-grid">
+        <div class="export-card" onclick="exportPDF()">
+          <div class="export-card-icon">📄</div>
+          <div class="export-card-label">Export PDF</div>
+          <div class="export-card-sub">Siap cetak & arsip</div>
+        </div>
+        <div class="export-card" onclick="exportJSON()">
+          <div class="export-card-icon">🗂️</div>
+          <div class="export-card-label">Export JSON</div>
+          <div class="export-card-sub">Backup & restore</div>
+        </div>
+        <div class="export-card" onclick="exportExcel()">
+          <div class="export-card-icon">📊</div>
+          <div class="export-card-label">Export Excel</div>
+          <div class="export-card-sub">Spreadsheet CSV</div>
+        </div>
+        <div class="export-card" onclick="importJSON()">
+          <div class="export-card-icon">📥</div>
+          <div class="export-card-label">Import JSON</div>
+          <div class="export-card-sub">Pulihkan data</div>
+        </div>
+      </div>
+      <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="handleImport(event)">
+    </div>
+  </div>
+
+  <!-- ===== PAGE: PENGATURAN ===== -->
+  <div class="page" id="page-pengaturan">
+    <div class="top-header">
+      <h1>⚙️ Pengaturan</h1>
+    </div>
+    <div class="scroll-content">
+      <div style="padding:16px">
+        <div class="info-box" style="margin:0 0 16px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Data tersimpan di browser Anda (IndexedDB). Aman & offline.
+        </div>
+        <div class="list-card" style="margin:0">
+          <div class="list-item" onclick="navigateTo('export')">
+            <div class="list-item-icon">📤</div>
+            <div class="list-item-content">
+              <div class="list-item-title">Export & Import Data</div>
+              <div class="list-item-sub">Backup atau pulihkan data</div>
+            </div>
+            <span style="color:var(--gray-400);font-size:18px">›</span>
+          </div>
+          <div class="list-item" onclick="navigateTo('banner')">
+            <div class="list-item-icon">🖼️</div>
+            <div class="list-item-content">
+              <div class="list-item-title">Generator Banner</div>
+              <div class="list-item-sub">Buat spanduk & poster</div>
+            </div>
+            <span style="color:var(--gray-400);font-size:18px">›</span>
+          </div>
+          <div class="list-item" onclick="resetAllData()">
+            <div class="list-item-icon" style="background:var(--red-100)">🗑️</div>
+            <div class="list-item-content">
+              <div class="list-item-title" style="color:var(--red-500)">Hapus Semua Data</div>
+              <div class="list-item-sub">Reset aplikasi ke awal</div>
+            </div>
+            <span style="color:var(--gray-400);font-size:18px">›</span>
+          </div>
+        </div>
+      </div>
+      <div style="padding:0 16px;text-align:center">
+        <div style="font-size:12px;color:var(--gray-400);line-height:1.6">
+          <strong style="color:var(--gray-600)">Hasil Musawaroh Digital</strong><br>
+          v1.0.0 · Single File PWA<br>
+          Teknologi: HTML, CSS, JS, IndexedDB<br>
+          Offline First · No Backend
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL: ADD/EDIT MUSAWAROH ===== -->
+  <div class="modal-overlay" id="modalMusawaroh" onclick="closeModalOnBg(event,'modalMusawaroh')">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <div class="modal-title" id="modalMusawarohTitle">Buat Musawaroh</div>
+      <div class="modal-body">
+        <input type="hidden" id="editMusawarohId">
+        <div class="form-group">
+          <label class="form-label">Judul Musawaroh <span class="req">*</span></label>
+          <input type="text" class="form-input" id="mJudul" placeholder="Contoh: Musawaroh Desa Bulan Mei">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kategori Dapukan <span class="req">*</span></label>
+          <select class="form-select" id="mKategori">
+            <option value="">-- Pilih Kategori --</option>
+            <option value="Hasil Musawaroh Desa">Hasil Musawaroh Desa</option>
+            <option value="Hasil Musawaroh Kelompok">Hasil Musawaroh Kelompok</option>
+            <option value="Hasil Musawaroh Muda-Mudi">Hasil Musawaroh Muda-Mudi</option>
+            <option value="Hasil Musawaroh PPG">Hasil Musawaroh PPG</option>
+            <option value="Hasil Musawaroh Kegiatan">Hasil Musawaroh Kegiatan</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tanggal <span class="req">*</span></label>
+          <input type="date" class="form-input" id="mTanggal">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tempat <span class="req">*</span></label>
+          <input type="text" class="form-input" id="mTempat" placeholder="Contoh: Balai Desa Sukamaju">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Pimpinan Musawaroh</label>
+          <input type="text" class="form-input" id="mPimpinan" placeholder="Contoh: Kepala Desa">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notulis</label>
+          <input type="text" class="form-input" id="mNotulis" placeholder="Contoh: Sekretaris Desa">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Agenda Musawaroh</label>
+          <textarea class="form-textarea" id="mAgenda" placeholder="Tuliskan agenda musawaroh..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select class="form-select" id="mStatus">
+            <option value="aktif">Aktif</option>
+            <option value="selesai">Selesai</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('modalMusawaroh')">Batal</button>
+        <button class="btn btn-primary" onclick="saveMusawaroh()">💾 Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL: ADD/EDIT PESERTA ===== -->
+  <div class="modal-overlay" id="modalPeserta" onclick="closeModalOnBg(event,'modalPeserta')">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <div class="modal-title" id="modalPesertaTitle">Tambah Peserta</div>
+      <div class="modal-body">
+        <input type="hidden" id="editPesertaId">
+        <div class="form-group">
+          <label class="form-label">Musawaroh <span class="req">*</span></label>
+          <select class="form-select" id="pMusawaroh"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nama Lengkap <span class="req">*</span></label>
+          <input type="text" class="form-input" id="pNama" placeholder="Masukkan nama lengkap">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Dapukan <span class="req">*</span></label>
+          <select class="form-select" id="pDapukan">
+            <option value="">-- Pilih Dapukan --</option>
+            <option value="Hasil Musawaroh Desa">Hasil Musawaroh Desa</option>
+            <option value="Hasil Musawaroh Kelompok">Hasil Musawaroh Kelompok</option>
+            <option value="Hasil Musawaroh Muda-Mudi">Hasil Musawaroh Muda-Mudi</option>
+            <option value="Hasil Musawaroh PPG">Hasil Musawaroh PPG</option>
+            <option value="Hasil Musawaroh Kegiatan">Hasil Musawaroh Kegiatan</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nomor HP (Opsional)</label>
+          <input type="tel" class="form-input" id="pHP" placeholder="Contoh: 08123456789">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tanda Tangan</label>
+          <div class="sig-canvas-wrap" style="height:130px">
+            <canvas id="pesertaSigCanvas"></canvas>
+            <div class="sig-hint" id="pesertaSigHint">Tanda tangan di sini</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary btn-sm" onclick="clearPesertaSig()">🗑️ Hapus</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('modalPeserta')">Batal</button>
+        <button class="btn btn-primary" onclick="savePeserta()">💾 Simpan Peserta</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL: ADD/EDIT HASIL ===== -->
+  <div class="modal-overlay" id="modalHasil" onclick="closeModalOnBg(event,'modalHasil')">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <div class="modal-title" id="modalHasilTitle">Tambah Hasil</div>
+      <div class="modal-body">
+        <input type="hidden" id="editHasilId">
+        <input type="hidden" id="hasilMusawarohId">
+        <div class="form-group">
+          <label class="form-label">Hasil / Keputusan <span class="req">*</span></label>
+          <textarea class="form-textarea" id="hTeks" placeholder="Tuliskan hasil atau keputusan musawaroh..." style="min-height:100px"></textarea>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('modalHasil')">Batal</button>
+        <button class="btn btn-primary" onclick="saveHasil()">💾 Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CONFIRM DIALOG ===== -->
+  <div class="confirm-overlay" id="confirmDialog">
+    <div class="confirm-box">
+      <div class="confirm-icon" id="confirmIcon">⚠️</div>
+      <div class="confirm-title" id="confirmTitle">Hapus Data?</div>
+      <div class="confirm-msg" id="confirmMsg">Tindakan ini tidak dapat dibatalkan.</div>
+      <div class="confirm-actions">
+        <button class="btn btn-secondary" onclick="closeConfirm()">Batal</button>
+        <button class="btn btn-danger" id="confirmOkBtn" onclick="confirmAction()">Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOAST CONTAINER ===== -->
+  <div class="toast-container" id="toastContainer"></div>
+
+</div><!-- #app -->
+
+<script>
+// ==========================================
+//  DATABASE (IndexedDB)
+// ==========================================
+const DB_NAME = 'MusawarohDB';
+const DB_VER  = 1;
+let db;
+
+function openDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains('musawaroh')) {
+        const ms = d.createObjectStore('musawaroh', { keyPath: 'id', autoIncrement: true });
+        ms.createIndex('status','status');
+        ms.createIndex('tanggal','tanggal');
+      }
+      if (!d.objectStoreNames.contains('peserta')) {
+        const ps = d.createObjectStore('peserta', { keyPath: 'id', autoIncrement: true });
+        ps.createIndex('musawarohId','musawarohId');
+        ps.createIndex('hadir','hadir');
+      }
+      if (!d.objectStoreNames.contains('hasil')) {
+        const hs = d.createObjectStore('hasil', { keyPath: 'id', autoIncrement: true });
+        hs.createIndex('musawarohId','musawarohId');
+      }
+    };
+    req.onsuccess = e => { db = e.target.result; res(db); };
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+
+function dbGetAll(store) {
+  return new Promise((res, rej) => {
+    const tx = db.transaction(store,'readonly');
+    const req = tx.objectStore(store).getAll();
+    req.onsuccess = () => res(req.result);
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+function dbGet(store, id) {
+  return new Promise((res, rej) => {
+    const tx = db.transaction(store,'readonly');
+    const req = tx.objectStore(store).get(id);
+    req.onsuccess = () => res(req.result);
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+function dbAdd(store, data) {
+  return new Promise((res, rej) => {
+    const tx = db.transaction(store,'readwrite');
+    const req = tx.objectStore(store).add(data);
+    req.onsuccess = () => res(req.result);
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+function dbPut(store, data) {
+  return new Promise((res, rej) => {
+    const tx = db.transaction(store,'readwrite');
+    const req = tx.objectStore(store).put(data);
+    req.onsuccess = () => res(req.result);
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+function dbDelete(store, id) {
+  return new Promise((res, rej) => {
+    const tx = db.transaction(store,'readwrite');
+    const req = tx.objectStore(store).delete(id);
+    req.onsuccess = () => res();
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+function dbGetByIndex(store, indexName, value) {
+  return new Promise((res, rej) => {
+    const tx = db.transaction(store,'readonly');
+    const idx = tx.objectStore(store).index(indexName);
+    const req = idx.getAll(value);
+    req.onsuccess = () => res(req.result);
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+
+// ==========================================
+//  NAVIGATION
+// ==========================================
+let currentPage = 'dashboard';
+let pageHistory = ['dashboard'];
+let currentMusawarohId = null;
+
+function navigateTo(page, musawarohId=null) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.nav-item[data-page]').forEach(n => n.classList.remove('active'));
+  const navItem = document.querySelector(`.nav-item[data-page="${page}"]`);
+  if (navItem) navItem.classList.add('active');
+  if (currentPage !== page) pageHistory.push(page);
+  currentPage = page;
+  if (musawarohId) currentMusawarohId = musawarohId;
+  window.scrollTo(0,0);
+  loadPage(page);
+}
+
+function goBack() {
+  if (pageHistory.length > 1) {
+    pageHistory.pop();
+    const prev = pageHistory[pageHistory.length-1];
+    navigateTo(prev);
+  } else {
+    navigateTo('dashboard');
+  }
+}
+
+async function loadPage(page) {
+  switch(page) {
+    case 'dashboard':    loadDashboard(); break;
+    case 'musawaroh':    loadMusawarohList(); break;
+    case 'detail':       loadDetailMusawaroh(currentMusawarohId); break;
+    case 'peserta':      loadPesertaList(); break;
+    case 'daftar-hadir': loadDaftarHadir(); break;
+    case 'hasil':        loadHasilPage(); break;
+    case 'checkin':      loadCheckin(); break;
+    case 'banner':       loadBanner(); break;
+    case 'export':       loadExport(); break;
+    case 'pengaturan':   break;
+  }
+}
+
+// ==========================================
+//  DASHBOARD
+// ==========================================
+async function loadDashboard() {
+  try {
+    const [musawarohs, pesertas, hasils] = await Promise.all([
+      dbGetAll('musawaroh'), dbGetAll('peserta'), dbGetAll('hasil')
+    ]);
+    document.getElementById('statMusawaroh').textContent = musawarohs.length;
+    document.getElementById('statPeserta').textContent = pesertas.length;
+    document.getElementById('statTTD').textContent = pesertas.filter(p=>p.tanda_tangan).length;
+    document.getElementById('statHasil').textContent = hasils.length;
+
+    // Active card
+    const aktif = musawarohs.filter(m=>m.status==='aktif').sort((a,b)=>b.id-a.id)[0];
+    const heroEl = document.getElementById('heroActive');
+    if (aktif) {
+      heroEl.innerHTML = `
+        <div class="active-card">
+          <div class="active-card-info">
+            <div class="active-card-label">Musawaroh Aktif</div>
+            <div class="active-card-title">${esc(aktif.judul)}</div>
+            <div class="active-card-sub">📅 ${formatDate(aktif.tanggal)} &nbsp;•&nbsp; 📍 ${esc(aktif.tempat)}</div>
+          </div>
+          <span class="active-badge">Aktif</span>
+        </div>
+        <button class="btn-detail" onclick="navigateTo('detail',${aktif.id})">Lihat Detail →</button>`;
+    } else {
+      heroEl.innerHTML = `<div class="no-active">Belum ada musawaroh aktif</div>`;
+    }
+
+    // Recent list
+    const recent = [...musawarohs].sort((a,b)=>b.id-a.id).slice(0,5);
+    const el = document.getElementById('recentMusawaroh');
+    if (!recent.length) {
+      el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">Belum ada musawaroh</div><div class="empty-sub">Tap tombol + untuk membuat musawaroh pertama</div></div>`;
+    } else {
+      el.innerHTML = `<div class="list-card">${recent.map(m=>`
+        <div class="list-item" onclick="navigateTo('detail',${m.id})">
+          <div class="list-item-icon">${categoryIcon(m.kategori)}</div>
+          <div class="list-item-content">
+            <div class="list-item-title">${esc(m.judul)}</div>
+            <div class="list-item-sub">📅 ${formatDate(m.tanggal)} · ${esc(m.tempat)}</div>
+          </div>
+          <span class="status-badge ${m.status==='aktif'?'aktif':'selesai'}">${m.status}</span>
+        </div>`).join('')}</div>`;
+    }
+  } catch(e) { console.error(e); }
+}
+
+// ==========================================
+//  MUSAWAROH LIST
+// ==========================================
+let allMusawarohs = [];
+async function loadMusawarohList() {
+  allMusawarohs = await dbGetAll('musawaroh');
+  allMusawarohs.sort((a,b)=>b.id-a.id);
+  renderMusawarohList(allMusawarohs);
+}
+function renderMusawarohList(list) {
+  const el = document.getElementById('musawarohList');
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">Belum ada musawaroh</div><div class="empty-sub">Tap tombol + untuk membuat musawaroh baru</div><button class="btn btn-primary" onclick="showAddModal()">➕ Buat Musawaroh</button></div>`;
+    return;
+  }
+  el.innerHTML = `<div class="list-card">${list.map(m=>`
+    <div class="list-item" onclick="navigateTo('detail',${m.id})">
+      <div class="list-item-icon">${categoryIcon(m.kategori)}</div>
+      <div class="list-item-content">
+        <div class="list-item-title">${esc(m.judul)}</div>
+        <div class="list-item-sub">${formatDate(m.tanggal)} · ${esc(m.tempat)}</div>
+        <div style="margin-top:4px"><span class="status-badge ${m.status==='aktif'?'aktif':'selesai'}">${m.status}</span> <span style="font-size:11px;color:var(--gray-400);margin-left:4px">${esc(m.kategori)}</span></div>
+      </div>
+      <div class="list-item-actions" onclick="event.stopPropagation()">
+        <button class="action-btn edit" onclick="showEditMusawaroh(${m.id})">✏️</button>
+        <button class="action-btn del" onclick="confirmDeleteMusawaroh(${m.id})">🗑️</button>
+      </div>
+    </div>`).join('')}</div>`;
+}
+function filterMusawaroh() {
+  const q = document.getElementById('searchMusawaroh').value.toLowerCase();
+  renderMusawarohList(allMusawarohs.filter(m=>
+    m.judul.toLowerCase().includes(q) || (m.tempat||'').toLowerCase().includes(q)
+  ));
+}
+
+// ==========================================
+//  DETAIL MUSAWAROH
+// ==========================================
+async function loadDetailMusawaroh(id) {
+  if (!id) return;
+  const m = await dbGet('musawaroh', id);
+  if (!m) return;
+  currentMusawarohId = id;
+
+  // Info tab
+  document.getElementById('detailInfo').innerHTML = `
+    <div class="detail-section">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div class="detail-title">${esc(m.judul)}</div>
+        <span class="status-badge ${m.status==='aktif'?'aktif':'selesai'}">${m.status}</span>
+      </div>
+      <div class="detail-meta">
+        <span class="meta-chip">📅 ${formatDate(m.tanggal)}</span>
+        <span class="meta-chip">📍 ${esc(m.tempat)}</span>
+      </div>
+      <div style="background:var(--gray-50);border-radius:var(--radius-md);padding:4px 0">
+        <div class="info-row"><span class="info-label">Kategori</span><span class="info-value">${esc(m.kategori)}</span></div>
+        ${m.pimpinan?`<div class="info-row"><span class="info-label">Pimpinan</span><span class="info-value">${esc(m.pimpinan)}</span></div>`:''}
+        ${m.notulis?`<div class="info-row"><span class="info-label">Notulis</span><span class="info-value">${esc(m.notulis)}</span></div>`:''}
+        ${m.agenda?`<div class="info-row"><span class="info-label">Agenda</span><span class="info-value" style="white-space:pre-wrap">${esc(m.agenda)}</span></div>`:''}
+      </div>
+    </div>`;
+
+  await refreshDetailHasil(id);
+  await refreshDetailHadir(id);
+}
+
+async function refreshDetailHasil(id) {
+  const hasils = await dbGetByIndex('hasil','musawarohId', id);
+  const el = document.getElementById('detailHasil');
+  el.innerHTML = `
+    <div style="padding:16px">
+      <button class="btn btn-primary btn-full" onclick="showTambahHasilModal(${id})">➕ Tambah Hasil</button>
+    </div>
+    ${hasils.length ? hasils.map((h,i)=>`
+      <div class="hasil-item">
+        <div class="hasil-num">${i+1}</div>
+        <div class="hasil-text">${esc(h.teks)}</div>
+        <div class="hasil-actions">
+          <button class="action-btn edit" onclick="showEditHasil(${h.id},${id})">✏️</button>
+          <button class="action-btn del" onclick="confirmDeleteHasil(${h.id},${id})">🗑️</button>
+        </div>
+      </div>`).join('') : '<div class="empty-state"><div class="empty-icon">📝</div><div class="empty-title">Belum ada hasil</div><div class="empty-sub">Tambahkan keputusan musawaroh</div></div>'}`;
+}
+
+async function refreshDetailHadir(id) {
+  const pesertas = await dbGetByIndex('peserta','musawarohId', id);
+  const el = document.getElementById('detailHadir');
+  const hadir = pesertas.filter(p=>p.hadir).length;
+  el.innerHTML = `
+    <div style="padding:12px 16px;display:flex;gap:12px;background:var(--green-50)">
+      <div style="text-align:center;flex:1"><div style="font-size:24px;font-weight:800;color:var(--green-700)">${pesertas.length}</div><div style="font-size:11px;color:var(--gray-500)">Total</div></div>
+      <div style="text-align:center;flex:1"><div style="font-size:24px;font-weight:800;color:var(--green-700)">${hadir}</div><div style="font-size:11px;color:var(--gray-500)">Hadir</div></div>
+      <div style="text-align:center;flex:1"><div style="font-size:24px;font-weight:800;color:var(--gray-500)">${pesertas.length-hadir}</div><div style="font-size:11px;color:var(--gray-500)">Belum</div></div>
+    </div>
+    <div style="padding:12px 16px 4px"><button class="btn btn-primary btn-full" onclick="showTambahPesertaModal(${id})">➕ Tambah Peserta</button></div>
+    ${pesertas.length ? pesertas.map((p,i)=>`
+      <div class="peserta-item">
+        <div class="peserta-num">${i+1}</div>
+        <div class="peserta-avatar">${p.nama.charAt(0).toUpperCase()}</div>
+        <div class="peserta-info">
+          <div class="peserta-name">${esc(p.nama)}</div>
+          <div class="peserta-dapukan">${esc(p.dapukan||'')}${p.hp?' · '+esc(p.hp):''}</div>
+        </div>
+        ${p.tanda_tangan ? `<img class="peserta-sig" src="${p.tanda_tangan}" alt="ttd">` : `<div class="peserta-sig-empty">✍️</div>`}
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+          <span class="hadir-badge ${p.hadir?'yes':'no'}">${p.hadir?'✅':'❌'}</span>
+          <div style="display:flex;gap:2px">
+            <button class="action-btn edit" style="width:26px;height:26px" onclick="showEditPeserta(${p.id})">✏️</button>
+            <button class="action-btn del" style="width:26px;height:26px" onclick="confirmDeletePeserta(${p.id},${id})">🗑️</button>
+          </div>
+        </div>
+      </div>`).join('') : '<div class="empty-state" style="padding:32px"><div class="empty-icon">👥</div><div class="empty-title">Belum ada peserta</div></div>'}`;
+}
+
+function switchDetailTab(tab, btn) {
+  document.querySelectorAll('.detail-tab').forEach(t=>t.style.display='none');
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('detail'+tab.charAt(0).toUpperCase()+tab.slice(1)).style.display='block';
+  btn.classList.add('active');
+}
+
+// ==========================================
+//  PESERTA LIST (GLOBAL)
+// ==========================================
+let allPesertas = [];
+async function loadPesertaList() {
+  allPesertas = await dbGetAll('peserta');
+  const musawarohs = await dbGetAll('musawaroh');
+  const mMap = {};
+  musawarohs.forEach(m=>mMap[m.id]=m.judul);
+  renderPesertaList(allPesertas, mMap);
+}
+function renderPesertaList(list, mMap) {
+  const el = document.getElementById('pesertaList');
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">👥</div><div class="empty-title">Belum ada peserta</div><div class="empty-sub">Peserta akan muncul setelah ditambahkan ke musawaroh</div></div>`;
+    return;
+  }
+  el.innerHTML = `<div class="list-card">${list.map((p,i)=>`
+    <div class="peserta-item">
+      <div class="peserta-num">${i+1}</div>
+      <div class="peserta-avatar">${p.nama.charAt(0).toUpperCase()}</div>
+      <div class="peserta-info">
+        <div class="peserta-name">${esc(p.nama)}</div>
+        <div class="peserta-dapukan">${esc(p.dapukan||'')}${mMap[p.musawarohId]?' · '+esc(mMap[p.musawarohId]):''}</div>
+      </div>
+      ${p.tanda_tangan ? `<img class="peserta-sig" src="${p.tanda_tangan}" alt="ttd">` : `<div class="peserta-sig-empty">✍️</div>`}
+      <span class="hadir-badge ${p.hadir?'yes':'no'}">${p.hadir?'✅':'❌'}</span>
+    </div>`).join('')}</div>`;
+}
+function filterPeserta() {
+  const q = document.getElementById('searchPeserta').value.toLowerCase();
+  loadPesertaList().then(()=>{
+    const filtered = allPesertas.filter(p=>p.nama.toLowerCase().includes(q)||(p.dapukan||'').toLowerCase().includes(q));
+    dbGetAll('musawaroh').then(ms=>{const m={};ms.forEach(x=>m[x.id]=x.judul);renderPesertaList(filtered,m);});
+  });
+}
+
+// ==========================================
+//  DAFTAR HADIR PAGE
+// ==========================================
+async function loadDaftarHadir() {
+  const musawarohs = await dbGetAll('musawaroh');
+  if (!musawarohs.length) {
+    document.getElementById('daftarHadirContent').innerHTML = `<div class="empty-state"><div class="empty-icon">📝</div><div class="empty-title">Belum ada musawaroh</div><div class="empty-sub">Buat musawaroh terlebih dahulu</div><button class="btn btn-primary" onclick="showAddModal()">➕ Buat Musawaroh</button></div>`;
+    return;
+  }
+  const aktif = musawarohs.filter(m=>m.status==='aktif').sort((a,b)=>b.id-a.id)[0] || musawarohs[0];
+  const pesertas = await dbGetByIndex('peserta','musawarohId', aktif.id);
+  const hadir = pesertas.filter(p=>p.hadir).length;
+  document.getElementById('daftarHadirContent').innerHTML = `
+    <div style="padding:12px 16px;background:var(--green-700);color:white">
+      <div style="font-size:11px;opacity:.8;margin-bottom:2px">Musawaroh Aktif</div>
+      <div style="font-size:15px;font-weight:700">${esc(aktif.judul)}</div>
+      <div style="font-size:12px;opacity:.8;margin-top:2px">${formatDate(aktif.tanggal)} · ${esc(aktif.tempat)}</div>
+    </div>
+    <div style="display:flex;gap:0;border-bottom:1px solid var(--gray-100)">
+      <div style="flex:1;text-align:center;padding:12px;border-right:1px solid var(--gray-100)">
+        <div style="font-size:22px;font-weight:800;color:var(--green-700)">${pesertas.length}</div>
+        <div style="font-size:11px;color:var(--gray-500)">Semua (${pesertas.length})</div>
+      </div>
+      <div style="flex:1;text-align:center;padding:12px;border-right:1px solid var(--gray-100)">
+        <div style="font-size:22px;font-weight:800;color:var(--green-700)">${hadir}</div>
+        <div style="font-size:11px;color:var(--gray-500)">Hadir (${hadir})</div>
+      </div>
+      <div style="flex:1;text-align:center;padding:12px">
+        <div style="font-size:22px;font-weight:800;color:var(--gray-500)">${pesertas.length-hadir}</div>
+        <div style="font-size:11px;color:var(--gray-500)">Belum (${pesertas.length-hadir})</div>
+      </div>
+    </div>
+    <div style="padding:12px 16px">
+      <button class="btn btn-primary btn-full" onclick="showTambahPesertaModal(${aktif.id})">➕ Tambah Peserta</button>
+    </div>
+    <div class="list-card">
+      ${pesertas.length ? pesertas.map((p,i)=>`
+        <div class="peserta-item">
+          <div class="peserta-num">${i+1}</div>
+          <div class="peserta-avatar">${p.nama.charAt(0).toUpperCase()}</div>
+          <div class="peserta-info">
+            <div class="peserta-name">${esc(p.nama)}</div>
+            <div class="peserta-dapukan">${esc(p.dapukan||'')}${p.hp?' · '+esc(p.hp):''}</div>
+          </div>
+          ${p.tanda_tangan ? `<img class="peserta-sig" src="${p.tanda_tangan}" alt="ttd">` : `<div class="peserta-sig-empty">✍️</div>`}
+          <button onclick="toggleHadir(${p.id},${aktif.id})" style="border:none;background:none;cursor:pointer;font-size:22px">${p.hadir?'✅':'⬜'}</button>
+        </div>`).join('') : '<div class="empty-state" style="padding:24px"><div class="empty-icon">👥</div><div class="empty-title">Belum ada peserta</div></div>'}
+    </div>`;
+}
+
+async function toggleHadir(pesertaId, musawarohId) {
+  const p = await dbGet('peserta', pesertaId);
+  p.hadir = !p.hadir;
+  await dbPut('peserta', p);
+  loadDaftarHadir();
+  showToast(p.hadir?'✅ Peserta ditandai hadir':'Peserta ditandai belum hadir');
+}
+
+// ==========================================
+//  HASIL PAGE
+// ==========================================
+async function loadHasilPage() {
+  const musawarohs = await dbGetAll('musawaroh');
+  if (!musawarohs.length) {
+    document.getElementById('hasilContent').innerHTML = `<div class="empty-state"><div class="empty-icon">📝</div><div class="empty-title">Belum ada musawaroh</div><div class="empty-sub">Buat musawaroh terlebih dahulu</div></div>`;
+    return;
+  }
+  const aktif = musawarohs.filter(m=>m.status==='aktif').sort((a,b)=>b.id-a.id)[0] || musawarohs[0];
+  await renderHasilPage(aktif);
+}
+async function renderHasilPage(m) {
+  const hasils = await dbGetByIndex('hasil','musawarohId', m.id);
+  document.getElementById('hasilContent').innerHTML = `
+    <div style="padding:12px 16px;background:var(--green-700);color:white;margin-bottom:0">
+      <div style="font-size:11px;opacity:.8">Musawaroh</div>
+      <div style="font-size:15px;font-weight:700">${esc(m.judul)}</div>
+    </div>
+    <div style="padding:12px 16px">
+      <button class="btn btn-primary btn-full" onclick="showTambahHasilModal(${m.id})">➕ Tambah Hasil</button>
+    </div>
+    <div id="hasilListInner">
+      ${hasils.length ? `<div class="list-card">${hasils.map((h,i)=>`
+        <div class="hasil-item">
+          <div class="hasil-num">${i+1}</div>
+          <div class="hasil-text">${esc(h.teks)}</div>
+          <div class="hasil-actions">
+            <button class="action-btn edit" onclick="showEditHasil(${h.id},${m.id})">✏️</button>
+            <button class="action-btn del" onclick="confirmDeleteHasil(${h.id},${m.id})">🗑️</button>
+          </div>
+        </div>`).join('')}</div>` : '<div class="empty-state"><div class="empty-icon">📝</div><div class="empty-title">Belum ada hasil</div></div>'}
+    </div>`;
+}
+
+// ==========================================
+//  MODALS: ADD/EDIT MUSAWAROH
+// ==========================================
+function showAddModal() {
+  document.getElementById('editMusawarohId').value = '';
+  document.getElementById('modalMusawarohTitle').textContent = 'Buat Musawaroh';
+  document.getElementById('mJudul').value = '';
+  document.getElementById('mKategori').value = '';
+  document.getElementById('mTanggal').value = new Date().toISOString().split('T')[0];
+  document.getElementById('mTempat').value = '';
+  document.getElementById('mPimpinan').value = '';
+  document.getElementById('mNotulis').value = '';
+  document.getElementById('mAgenda').value = '';
+  document.getElementById('mStatus').value = 'aktif';
+  document.getElementById('modalMusawaroh').classList.add('open');
+}
+
+async function showEditMusawaroh(id) {
+  const m = await dbGet('musawaroh', id);
+  document.getElementById('editMusawarohId').value = m.id;
+  document.getElementById('modalMusawarohTitle').textContent = 'Edit Musawaroh';
+  document.getElementById('mJudul').value = m.judul||'';
+  document.getElementById('mKategori').value = m.kategori||'';
+  document.getElementById('mTanggal').value = m.tanggal||'';
+  document.getElementById('mTempat').value = m.tempat||'';
+  document.getElementById('mPimpinan').value = m.pimpinan||'';
+  document.getElementById('mNotulis').value = m.notulis||'';
+  document.getElementById('mAgenda').value = m.agenda||'';
+  document.getElementById('mStatus').value = m.status||'aktif';
+  document.getElementById('modalMusawaroh').classList.add('open');
+}
+
+function editCurrentMusawaroh() { if (currentMusawarohId) showEditMusawaroh(currentMusawarohId); }
+
+async function saveMusawaroh() {
+  const judul = document.getElementById('mJudul').value.trim();
+  const kategori = document.getElementById('mKategori').value;
+  const tanggal = document.getElementById('mTanggal').value;
+  const tempat = document.getElementById('mTempat').value.trim();
+  if (!judul||!kategori||!tanggal||!tempat) { showToast('⚠️ Isi semua field wajib','error'); return; }
+  const data = {
+    judul, kategori, tanggal, tempat,
+    pimpinan: document.getElementById('mPimpinan').value.trim(),
+    notulis:  document.getElementById('mNotulis').value.trim(),
+    agenda:   document.getElementById('mAgenda').value.trim(),
+    status:   document.getElementById('mStatus').value,
+    updatedAt: new Date().toISOString()
+  };
+  const editId = document.getElementById('editMusawarohId').value;
+  if (editId) {
+    data.id = parseInt(editId);
+    await dbPut('musawaroh', data);
+    showToast('✅ Musawaroh diperbarui');
+  } else {
+    data.createdAt = new Date().toISOString();
+    await dbAdd('musawaroh', data);
+    showToast('✅ Musawaroh berhasil dibuat');
+  }
+  closeModal('modalMusawaroh');
+  loadPage(currentPage);
+  loadDashboard();
+}
+
+async function deleteCurrentMusawaroh() {
+  if (currentMusawarohId) confirmDeleteMusawaroh(currentMusawarohId);
+}
+
+function confirmDeleteMusawaroh(id) {
+  showConfirm('🗑️','Hapus Musawaroh?','Semua peserta dan hasil musawaroh ini juga akan dihapus.',async()=>{
+    const pesertas = await dbGetByIndex('peserta','musawarohId',id);
+    for(const p of pesertas) await dbDelete('peserta',p.id);
+    const hasils = await dbGetByIndex('hasil','musawarohId',id);
+    for(const h of hasils) await dbDelete('hasil',h.id);
+    await dbDelete('musawaroh',id);
+    showToast('🗑️ Musawaroh dihapus');
+    if(currentPage==='detail') navigateTo('musawaroh');
+    else loadPage(currentPage);
+    loadDashboard();
+  });
+}
+
+// ==========================================
+//  MODALS: ADD/EDIT PESERTA + SIGNATURE
+// ==========================================
+let pesertaSigCtx, pesertaSigDrawing=false, pesertaSigHasContent=false;
+
+async function showTambahPesertaModal(musawarohId=null) {
+  document.getElementById('editPesertaId').value = '';
+  document.getElementById('modalPesertaTitle').textContent = 'Tambah Peserta';
+  document.getElementById('pNama').value = '';
+  document.getElementById('pDapukan').value = '';
+  document.getElementById('pHP').value = '';
+
+  // Load musawaroh dropdown
+  const musawarohs = await dbGetAll('musawaroh');
+  const sel = document.getElementById('pMusawaroh');
+  sel.innerHTML = musawarohs.map(m=>`<option value="${m.id}" ${m.id==musawarohId?'selected':''}>${esc(m.judul)}</option>`).join('');
+
+  document.getElementById('modalPeserta').classList.add('open');
+  setTimeout(()=>initPesertaSig(),100);
+}
+
+async function showEditPeserta(id) {
+  const p = await dbGet('peserta',id);
+  document.getElementById('editPesertaId').value = p.id;
+  document.getElementById('modalPesertaTitle').textContent = 'Edit Peserta';
+  document.getElementById('pNama').value = p.nama||'';
+  document.getElementById('pDapukan').value = p.dapukan||'';
+  document.getElementById('pHP').value = p.hp||'';
+  const musawarohs = await dbGetAll('musawaroh');
+  const sel = document.getElementById('pMusawaroh');
+  sel.innerHTML = musawarohs.map(m=>`<option value="${m.id}" ${m.id==p.musawarohId?'selected':''}>${esc(m.judul)}</option>`).join('');
+  document.getElementById('modalPeserta').classList.add('open');
+  setTimeout(()=>{
+    initPesertaSig();
+    if(p.tanda_tangan) loadSigFromDataURL(pesertaSigCtx, p.tanda_tangan, document.getElementById('pesertaSigCanvas'));
+  },100);
+}
+
+function initPesertaSig() {
+  const canvas = document.getElementById('pesertaSigCanvas');
+  const wrap = canvas.parentElement;
+  canvas.width = wrap.offsetWidth * window.devicePixelRatio;
+  canvas.height = wrap.offsetHeight * window.devicePixelRatio;
+  canvas.style.width = wrap.offsetWidth+'px';
+  canvas.style.height = wrap.offsetHeight+'px';
+  pesertaSigCtx = canvas.getContext('2d');
+  pesertaSigCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  pesertaSigCtx.strokeStyle = '#1a1a1a';
+  pesertaSigCtx.lineWidth = 2;
+  pesertaSigCtx.lineCap = 'round';
+  pesertaSigCtx.lineJoin = 'round';
+  pesertaSigHasContent = false;
+  setupSigEvents(canvas, pesertaSigCtx, ()=>{ pesertaSigHasContent=true; document.getElementById('pesertaSigHint').style.display='none'; });
+}
+
+function loadSigFromDataURL(ctx, dataURL, canvas) {
+  const img = new Image();
+  img.onload = ()=> ctx.drawImage(img, 0, 0, canvas.width/window.devicePixelRatio, canvas.height/window.devicePixelRatio);
+  img.src = dataURL;
+  pesertaSigHasContent = true;
+  document.getElementById('pesertaSigHint').style.display = 'none';
+}
+
+function clearPesertaSig() {
+  if(!pesertaSigCtx) return;
+  const c = document.getElementById('pesertaSigCanvas');
+  pesertaSigCtx.clearRect(0,0,c.width,c.height);
+  pesertaSigHasContent = false;
+  document.getElementById('pesertaSigHint').style.display = '';
+}
+
+function setupSigEvents(canvas, ctx, onDraw) {
+  let drawing = false, lastX=0, lastY=0;
+  function getPos(e) {
+    const r = canvas.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return [src.clientX-r.left, src.clientY-r.top];
+  }
+  function start(e) { e.preventDefault(); drawing=true; [lastX,lastY]=getPos(e); }
+  function move(e) {
+    if(!drawing) return; e.preventDefault();
+    const [x,y] = getPos(e);
+    ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(x,y); ctx.stroke();
+    [lastX,lastY]=[x,y]; onDraw();
+  }
+  function end() { drawing=false; }
+  canvas.addEventListener('mousedown',start); canvas.addEventListener('mousemove',move); canvas.addEventListener('mouseup',end);
+  canvas.addEventListener('touchstart',start,{passive:false}); canvas.addEventListener('touchmove',move,{passive:false}); canvas.addEventListener('touchend',end);
+}
+
+async function savePeserta() {
+  const nama = document.getElementById('pNama').value.trim();
+  const musawarohId = parseInt(document.getElementById('pMusawaroh').value);
+  const dapukan = document.getElementById('pDapukan').value;
+  if(!nama||!musawarohId||!dapukan) { showToast('⚠️ Isi nama, musawaroh, dan dapukan','error'); return; }
+  let ttd = null;
+  if(pesertaSigHasContent) {
+    const canvas = document.getElementById('pesertaSigCanvas');
+    ttd = canvas.toDataURL('image/png');
+  }
+  const data = { nama, musawarohId, dapukan, hp: document.getElementById('pHP').value.trim(), tanda_tangan: ttd, hadir: ttd?true:false };
+  const editId = document.getElementById('editPesertaId').value;
+  if(editId) {
+    data.id = parseInt(editId);
+    const existing = await dbGet('peserta',data.id);
+    data.hadir = existing.hadir;
+    await dbPut('peserta',data);
+    showToast('✅ Peserta diperbarui');
+  } else {
+    await dbAdd('peserta',data);
+    showToast('✅ Peserta ditambahkan');
+  }
+  closeModal('modalPeserta');
+  loadPage(currentPage);
+  if(currentPage==='detail') { await refreshDetailHadir(currentMusawarohId); }
+  loadDashboard();
+}
+
+function confirmDeletePeserta(id, musawarohId) {
+  showConfirm('🗑️','Hapus Peserta?','Data peserta ini akan dihapus permanen.',async()=>{
+    await dbDelete('peserta',id);
+    showToast('🗑️ Peserta dihapus');
+    if(currentPage==='detail') { await refreshDetailHadir(musawarohId); }
+    else loadPage(currentPage);
+    loadDashboard();
+  });
+}
+
+// ==========================================
+//  MODALS: ADD/EDIT HASIL
+// ==========================================
+function showTambahHasilModal(musawarohId) {
+  document.getElementById('editHasilId').value = '';
+  document.getElementById('hasilMusawarohId').value = musawarohId;
+  document.getElementById('modalHasilTitle').textContent = 'Tambah Hasil';
+  document.getElementById('hTeks').value = '';
+  document.getElementById('modalHasil').classList.add('open');
+}
+
+async function showEditHasil(id, musawarohId) {
+  const h = await dbGet('hasil',id);
+  document.getElementById('editHasilId').value = h.id;
+  document.getElementById('hasilMusawarohId').value = musawarohId;
+  document.getElementById('modalHasilTitle').textContent = 'Edit Hasil';
+  document.getElementById('hTeks').value = h.teks||'';
+  document.getElementById('modalHasil').classList.add('open');
+}
+
+async function saveHasil() {
+  const teks = document.getElementById('hTeks').value.trim();
+  if(!teks) { showToast('⚠️ Isi teks hasil','error'); return; }
+  const musawarohId = parseInt(document.getElementById('hasilMusawarohId').value);
+  const editId = document.getElementById('editHasilId').value;
+  if(editId) {
+    await dbPut('hasil',{id:parseInt(editId), musawarohId, teks});
+    showToast('✅ Hasil diperbarui');
+  } else {
+    await dbAdd('hasil',{musawarohId, teks, createdAt: new Date().toISOString()});
+    showToast('✅ Hasil ditambahkan');
+  }
+  closeModal('modalHasil');
+  if(currentPage==='detail') await refreshDetailHasil(musawarohId);
+  else if(currentPage==='hasil') await loadHasilPage();
+  loadDashboard();
+}
+
+function confirmDeleteHasil(id, musawarohId) {
+  showConfirm('🗑️','Hapus Hasil?','Keputusan ini akan dihapus permanen.',async()=>{
+    await dbDelete('hasil',id);
+    showToast('🗑️ Hasil dihapus');
+    if(currentPage==='detail') await refreshDetailHasil(musawarohId);
+    else if(currentPage==='hasil') await loadHasilPage();
+    loadDashboard();
+  });
+}
+
+// ==========================================
+//  SELF CHECK-IN
+// ==========================================
+let checkinSigCtx, checkinSigHasContent=false;
+
+async function loadCheckin() {
+  const musawarohs = await dbGetAll('musawaroh');
+  const sel = document.getElementById('checkinMusawaroh');
+  sel.innerHTML = `<option value="">-- Pilih Musawaroh --</option>` + musawarohs.map(m=>`<option value="${m.id}">${esc(m.judul)}</option>`).join('');
+  document.getElementById('checkinPeserta').innerHTML = `<option value="">-- Pilih Musawaroh dulu --</option>`;
+}
+
+async function loadCheckinPeserta() {
+  const mId = parseInt(document.getElementById('checkinMusawaroh').value);
+  if(!mId) return;
+  const pesertas = await dbGetByIndex('peserta','musawarohId',mId);
+  const belumHadir = pesertas.filter(p=>!p.hadir);
+  const sel = document.getElementById('checkinPeserta');
+  sel.innerHTML = `<option value="">-- Pilih Nama --</option>` + belumHadir.map(p=>`<option value="${p.id}">${esc(p.nama)}</option>`).join('');
+  document.getElementById('checkinSigArea').style.display='block';
+  setTimeout(()=>initCheckinSig(),100);
+}
+
+function initCheckinSig() {
+  const canvas = document.getElementById('checkinSigCanvas');
+  const wrap = canvas.parentElement;
+  canvas.width = wrap.offsetWidth * window.devicePixelRatio;
+  canvas.height = 120 * window.devicePixelRatio;
+  canvas.style.width = wrap.offsetWidth+'px';
+  canvas.style.height = '120px';
+  checkinSigCtx = canvas.getContext('2d');
+  checkinSigCtx.scale(window.devicePixelRatio,window.devicePixelRatio);
+  checkinSigCtx.strokeStyle='#1a1a1a'; checkinSigCtx.lineWidth=2; checkinSigCtx.lineCap='round'; checkinSigCtx.lineJoin='round';
+  checkinSigHasContent = false;
+  setupSigEvents(canvas,checkinSigCtx,()=>{ checkinSigHasContent=true; document.getElementById('checkinSigHint').style.display='none'; });
+}
+
+function clearCheckinSig() {
+  if(!checkinSigCtx) return;
+  const c = document.getElementById('checkinSigCanvas');
+  checkinSigCtx.clearRect(0,0,c.width,c.height);
+  checkinSigHasContent=false; document.getElementById('checkinSigHint').style.display='';
+}
+
+async function doCheckin() {
+  const mId = parseInt(document.getElementById('checkinMusawaroh').value);
+  const pId = parseInt(document.getElementById('checkinPeserta').value);
+  if(!mId||!pId) { showToast('⚠️ Pilih musawaroh dan nama','error'); return; }
+  const p = await dbGet('peserta',pId);
+  if(checkinSigHasContent) p.tanda_tangan = document.getElementById('checkinSigCanvas').toDataURL('image/png');
+  p.hadir = true;
+  await dbPut('peserta',p);
+  showToast(`✅ ${p.nama} berhasil check-in!`,'success');
+  document.getElementById('checkinStatus').innerHTML=`<div style="margin:0 16px;padding:14px;background:var(--green-50);border:1.5px solid var(--green-200);border-radius:var(--radius-md);text-align:center"><div style="font-size:28px">✅</div><div style="font-size:15px;font-weight:700;color:var(--green-700);margin-top:4px">${esc(p.nama)}</div><div style="font-size:13px;color:var(--gray-600)">Berhasil check-in!</div></div>`;
+  loadCheckinPeserta();
+  clearCheckinSig();
+  loadDashboard();
+}
+
+// ==========================================
+//  BANNER GENERATOR
+// ==========================================
+let currentTemplate = 'spanduk';
+let bannerMusawarohData = null;
+
+async function loadBanner() {
+  const musawarohs = await dbGetAll('musawaroh');
+  const sel = document.getElementById('bannerMusawaroh');
+  sel.innerHTML = `<option value="">-- Pilih Musawaroh --</option>` + musawarohs.map(m=>`<option value="${m.id}">${esc(m.judul)}</option>`).join('');
+  const aktif = musawarohs.find(m=>m.status==='aktif') || musawarohs[0];
+  if(aktif) { sel.value=aktif.id; await generateBanner(); }
+}
+
+function setTemplate(tmpl, btn) {
+  currentTemplate = tmpl;
+  document.querySelectorAll('.tmpl-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  generateBanner();
+}
+
+async function generateBanner() {
+  const mId = parseInt(document.getElementById('bannerMusawaroh').value);
+  const canvas = document.getElementById('bannerCanvas');
+  if(!mId) { canvas.width=0; canvas.height=0; return; }
+  const m = await dbGet('musawaroh',mId);
+  const pesertas = await dbGetByIndex('peserta','musawarohId',mId);
+  const hasils = await dbGetByIndex('hasil','musawarohId',mId);
+  bannerMusawarohData = {m, pesertas, hasils};
+  drawBanner(canvas, m, pesertas, hasils);
+}
+
+function drawBanner(canvas, m, pesertas, hasils) {
+  let W, H;
+  if(currentTemplate==='spanduk') { W=900; H=300; }
+  else if(currentTemplate==='banner') { W=600; H=800; }
+  else if(currentTemplate==='instagram') { W=600; H=600; }
+  else { W=400; H=711; } // story
+
+  canvas.width=W; canvas.height=H;
+  const ctx = canvas.getContext('2d');
+
+  // Background gradient
+  const grad = ctx.createLinearGradient(0,0,W,H);
+  grad.addColorStop(0,'#0d4a22'); grad.addColorStop(1,'#1f9148');
+  ctx.fillStyle=grad; ctx.fillRect(0,0,W,H);
+
+  // Decorative circles
+  ctx.fillStyle='rgba(255,255,255,0.05)';
+  ctx.beginPath(); ctx.arc(W-80,H-80,120,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(80,80,80,0,Math.PI*2); ctx.fill();
+
+  // White content area
+  const padX = currentTemplate==='spanduk'?40:30;
+  const padY = currentTemplate==='spanduk'?30:40;
+  const cW = W-padX*2, cH = H-padY*2;
+  ctx.fillStyle='rgba(255,255,255,0.95)';
+  roundRect(ctx,padX,padY,cW,cH,16);
+
+  // Header bar
+  ctx.fillStyle='#1a7a3c';
+  roundRect(ctx,padX,padY,cW,currentTemplate==='spanduk'?56:64,16,true);
+
+  const titleSize = currentTemplate==='spanduk'?22:20;
+  ctx.fillStyle='#fff'; ctx.font=`bold ${titleSize}px -apple-system,sans-serif`;
+  ctx.textAlign='center';
+  const title = (m.judul||'HASIL MUSAWAROH').toUpperCase();
+  ctx.fillText(title, W/2, padY+(currentTemplate==='spanduk'?37:42));
+
+  // Date and place
+  const infoY = padY+(currentTemplate==='spanduk'?75:85);
+  ctx.font=`13px -apple-system,sans-serif`; ctx.fillStyle='#4a535b';
+  ctx.fillText(`${formatDate(m.tanggal)}   |   ${m.tempat||''}`, W/2, infoY);
+
+  // Divider
+  ctx.strokeStyle='#e2e6ea'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(padX+20,infoY+14); ctx.lineTo(padX+cW-20,infoY+14); ctx.stroke();
+
+  // Hasil list
+  const startY = infoY+32;
+  const maxItems = currentTemplate==='spanduk'?4:(currentTemplate==='story'?6:8);
+  ctx.fillStyle='#1e2328'; ctx.textAlign='left';
+  const lSize = currentTemplate==='spanduk'?12.5:13;
+  const lH = currentTemplate==='spanduk'?22:24;
+  hasils.slice(0,maxItems).forEach((h,i)=>{
+    const y = startY + i*lH;
+    ctx.fillStyle='#1a7a3c'; ctx.font=`bold ${lSize}px -apple-system,sans-serif`;
+    ctx.fillText(`${i+1}.`, padX+20, y);
+    ctx.fillStyle='#343b42'; ctx.font=`${lSize}px -apple-system,sans-serif`;
+    const txt = h.teks.length>60 ? h.teks.slice(0,58)+'…' : h.teks;
+    ctx.fillText(txt, padX+40, y);
+  });
+
+  // Footer
+  const footY = padY+cH-14;
+  ctx.fillStyle='#6b7885'; ctx.font=`11px -apple-system,sans-serif`; ctx.textAlign='right';
+  ctx.fillText(`Disepakati oleh ${pesertas.filter(p=>p.hadir).length} Peserta`, padX+cW-16, footY);
+  ctx.textAlign='left';
+  ctx.fillText('Hasil Musawaroh Digital', padX+16, footY);
+}
+
+function roundRect(ctx,x,y,w,h,r,fill=true) {
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w,y+h-r); ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+  ctx.lineTo(x+r,y+h); ctx.arcTo(x,y+h,x,y+h-r,r);
+  ctx.lineTo(x,y+r); ctx.arcTo(x,y,x+r,y,r); ctx.closePath();
+  if(fill) ctx.fill(); else ctx.stroke();
+}
+
+function downloadBanner(fmt) {
+  const canvas = document.getElementById('bannerCanvas');
+  if(!canvas.width) { showToast('⚠️ Pilih musawaroh terlebih dahulu','error'); return; }
+  const link = document.createElement('a');
+  link.download = `banner-musawaroh.${fmt}`;
+  link.href = canvas.toDataURL(fmt==='jpg'?'image/jpeg':'image/png', 0.95);
+  link.click();
+  showToast('✅ Banner berhasil diunduh');
+}
+
+// ==========================================
+//  EXPORT
+// ==========================================
+async function loadExport() {
+  const musawarohs = await dbGetAll('musawaroh');
+  const sel = document.getElementById('exportMusawaroh');
+  sel.innerHTML = `<option value="">-- Semua Musawaroh --</option>` + musawarohs.map(m=>`<option value="${m.id}">${esc(m.judul)}</option>`).join('');
+}
+
+async function getExportData() {
+  const mId = document.getElementById('exportMusawaroh').value;
+  let musawarohs = await dbGetAll('musawaroh');
+  if(mId) musawarohs = musawarohs.filter(m=>m.id==mId);
+  const result = [];
+  for(const m of musawarohs) {
+    const pesertas = await dbGetByIndex('peserta','musawarohId',m.id);
+    const hasils = await dbGetByIndex('hasil','musawarohId',m.id);
+    result.push({...m, pesertas, hasils});
+  }
+  return result;
+}
+
+async function exportJSON() {
+  const data = await getExportData();
+  const blob = new Blob([JSON.stringify({version:1,exportedAt:new Date().toISOString(),data},null,2)],{type:'application/json'});
+  downloadBlob(blob,`musawaroh-backup-${dateSlug()}.json`);
+  showToast('✅ Data berhasil diekspor ke JSON');
+}
+
+async function exportExcel() {
+  const data = await getExportData();
+  let csv = 'No,Nama Musawaroh,Tanggal,Tempat,Kategori,Status,Nama Peserta,Dapukan,HP,Hadir,Tanda Tangan,Hasil\n';
+  let no=1;
+  for(const m of data) {
+    if(!m.pesertas.length && !m.hasils.length) {
+      csv += `${no++},"${esc2(m.judul)}","${m.tanggal}","${esc2(m.tempat)}","${esc2(m.kategori)}","${m.status}",,,,,\n`;
+    } else {
+      const maxRow = Math.max(m.pesertas.length, m.hasils.length, 1);
+      for(let i=0;i<maxRow;i++) {
+        const p = m.pesertas[i]||{};
+        const h = m.hasils[i]||{};
+        csv += `${i===0?no++:''},"${i===0?esc2(m.judul):''}","${i===0?m.tanggal:''}","${i===0?esc2(m.tempat):''}","${i===0?esc2(m.kategori):''}","${i===0?m.status:''}","${esc2(p.nama||'')}","${esc2(p.dapukan||'')}","${esc2(p.hp||'')}","${p.id?(p.hadir?'Ya':'Tidak'):''}","${p.tanda_tangan?'Ada':''}","${esc2(h.teks||'')}"\n`;
+      }
+    }
+  }
+  const blob = new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  downloadBlob(blob,`musawaroh-${dateSlug()}.csv`);
+  showToast('✅ Data berhasil diekspor ke Excel/CSV');
+}
+
+async function exportPDF() {
+  const data = await getExportData();
+  let html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+    body{font-family:Arial,sans-serif;font-size:13px;color:#333;margin:0;padding:0}
+    .page{page-break-after:always;padding:32px;max-width:800px;margin:0 auto}
+    .page:last-child{page-break-after:auto}
+    h1{color:#1a7a3c;font-size:22px;border-bottom:2px solid #1a7a3c;padding-bottom:8px;margin-bottom:4px}
+    h2{font-size:15px;color:#1a7a3c;margin:16px 0 6px}
+    .meta{color:#666;font-size:12px;margin-bottom:16px}
+    table{width:100%;border-collapse:collapse;margin-bottom:16px}
+    th{background:#1a7a3c;color:white;padding:8px;text-align:left;font-size:12px}
+    td{padding:7px 8px;border-bottom:1px solid #eee;font-size:12px}
+    tr:nth-child(even)td{background:#f9f9f9}
+    .sig{height:36px;max-width:80px}
+    ol li{padding:4px 0}
+    @media print{.page{padding:16px}}
+  </style></head><body>`;
+  for(const m of data) {
+    html += `<div class="page">
+      <h1>${esc(m.judul)}</h1>
+      <div class="meta">📅 ${formatDate(m.tanggal)} &nbsp;&nbsp; 📍 ${esc(m.tempat)} &nbsp;&nbsp; 📁 ${esc(m.kategori)} &nbsp;&nbsp; 
+      ${m.pimpinan?`👤 Pimpinan: ${esc(m.pimpinan)}&nbsp;&nbsp;`:''}
+      ${m.notulis?`✍️ Notulis: ${esc(m.notulis)}`:''}
+      </div>
+      ${m.agenda?`<div style="background:#f0faf5;border-left:3px solid #1a7a3c;padding:8px 12px;margin-bottom:12px;font-size:12px"><strong>Agenda:</strong> ${esc(m.agenda)}</div>`:''}
+      <h2>📋 Hasil Musawaroh (${m.hasils.length} keputusan)</h2>
+      ${m.hasils.length?`<ol>${m.hasils.map(h=>`<li>${esc(h.teks)}</li>`).join('')}</ol>`:'<p style="color:#999;font-style:italic">Belum ada hasil</p>'}
+      <h2>👥 Daftar Hadir Peserta (${m.pesertas.filter(p=>p.hadir).length}/${m.pesertas.length} hadir)</h2>
+      ${m.pesertas.length?`<table><thead><tr><th>No</th><th>Nama</th><th>Dapukan</th><th>HP</th><th>Hadir</th><th>Tanda Tangan</th></tr></thead><tbody>
+      ${m.pesertas.map((p,i)=>`<tr><td>${i+1}</td><td>${esc(p.nama)}</td><td>${esc(p.dapukan||'-')}</td><td>${esc(p.hp||'-')}</td><td>${p.hadir?'✅ Ya':'❌ Tidak'}</td><td>${p.tanda_tangan?`<img class="sig" src="${p.tanda_tangan}">`:'-'}</td></tr>`).join('')}
+      </tbody></table>`:'<p style="color:#999;font-style:italic">Belum ada peserta</p>'}
+    </div>`;
+  }
+  html += `</body></html>`;
+  const w = window.open('','_blank');
+  w.document.write(html); w.document.close();
+  setTimeout(()=>w.print(),500);
+  showToast('✅ Membuka halaman cetak PDF...');
+}
+
+function importJSON() { document.getElementById('importFileInput').click(); }
+
+async function handleImport(e) {
+  const file = e.target.files[0]; if(!file) return;
+  const text = await file.text();
+  try {
+    const parsed = JSON.parse(text);
+    const data = parsed.data || parsed;
+    let mCount=0, pCount=0, hCount=0;
+    for(const m of data) {
+      const {pesertas,hasils,...mData} = m;
+      delete mData.id;
+      const newMId = await dbAdd('musawaroh',{...mData,createdAt:new Date().toISOString()});
+      mCount++;
+      if(pesertas) for(const p of pesertas) { delete p.id; await dbAdd('peserta',{...p,musawarohId:newMId}); pCount++; }
+      if(hasils) for(const h of hasils) { delete h.id; await dbAdd('hasil',{...h,musawarohId:newMId}); hCount++; }
+    }
+    showToast(`✅ Import berhasil: ${mCount} musawaroh, ${pCount} peserta`);
+    loadPage(currentPage); loadDashboard();
+  } catch(err) { showToast('⚠️ File JSON tidak valid','error'); }
+  e.target.value='';
+}
+
+async function resetAllData() {
+  showConfirm('🗑️','Hapus Semua Data?','Semua musawaroh, peserta, dan hasil akan dihapus permanen!', async()=>{
+    const stores=['musawaroh','peserta','hasil'];
+    for(const s of stores) { const all=await dbGetAll(s); for(const x of all) await dbDelete(s,x.id); }
+    showToast('🗑️ Semua data dihapus');
+    loadDashboard();
+  });
+}
+
+// ==========================================
+//  MODAL HELPERS
+// ==========================================
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function closeModalOnBg(e,id) { if(e.target===e.currentTarget) closeModal(id); }
+
+let confirmCallback = null;
+function showConfirm(icon,title,msg,cb) {
+  document.getElementById('confirmIcon').textContent=icon;
+  document.getElementById('confirmTitle').textContent=title;
+  document.getElementById('confirmMsg').textContent=msg;
+  confirmCallback=cb;
+  document.getElementById('confirmDialog').classList.add('open');
+}
+function confirmAction() { closeConfirm(); if(confirmCallback) confirmCallback(); }
+function closeConfirm() { document.getElementById('confirmDialog').classList.remove('open'); confirmCallback=null; }
+
+// ==========================================
+//  TOAST
+// ==========================================
+function showToast(msg, type='success') {
+  const div=document.createElement('div');
+  div.className=`toast ${type}`;
+  div.innerHTML=`<span>${msg}</span>`;
+  const container=document.getElementById('toastContainer');
+  container.appendChild(div);
+  setTimeout(()=>div.remove(),3000);
+}
+
+// ==========================================
+//  UTILITIES
+// ==========================================
+function esc(str) { return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function esc2(str) { return String(str||'').replace(/"/g,'""'); }
+function formatDate(d) {
+  if(!d) return '-';
+  try {
+    const dt = new Date(d+'T00:00:00');
+    return dt.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+  } catch(e) { return d; }
+}
+function dateSlug() { return new Date().toISOString().slice(0,10); }
+function categoryIcon(cat) {
+  if(!cat) return '📋';
+  if(cat.includes('Desa')) return '🏘️';
+  if(cat.includes('Kelompok')) return '👫';
+  if(cat.includes('Muda')) return '🧑';
+  if(cat.includes('PPG')) return '🎓';
+  if(cat.includes('Kegiatan')) return '⭐';
+  return '📋';
+}
+function downloadBlob(blob,filename) {
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=filename; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+// ==========================================
+//  QUICK MODAL TRIGGER FROM NAV+
+// ==========================================
+function showAddModal() {
+  showAddMusawarohFromNav();
+}
+function showAddMusawarohFromNav() {
+  document.getElementById('editMusawarohId').value = '';
+  document.getElementById('modalMusawarohTitle').textContent = 'Buat Musawaroh';
+  document.getElementById('mJudul').value = '';
+  document.getElementById('mKategori').value = '';
+  document.getElementById('mTanggal').value = new Date().toISOString().split('T')[0];
+  document.getElementById('mTempat').value = '';
+  document.getElementById('mPimpinan').value = '';
+  document.getElementById('mNotulis').value = '';
+  document.getElementById('mAgenda').value = '';
+  document.getElementById('mStatus').value = 'aktif';
+  document.getElementById('modalMusawaroh').classList.add('open');
+}
+
+// ==========================================
+//  INIT
+// ==========================================
+(async () => {
+  await openDB();
+  loadDashboard();
+  // Close confirm on overlay click
+  document.getElementById('confirmDialog').addEventListener('click', e => {
+    if(e.target===e.currentTarget) closeConfirm();
+  });
+})();
+</script>
+</body>
+</html>
